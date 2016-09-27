@@ -79,7 +79,7 @@ unsigned row_size(vector<pair<string,string> > schema){
     return size+cabecalho;
 }
 
-void find_key(string file_name, unsigned key, int block_size){
+void find_key(string  file_name, unsigned key, int block_size){
     ifstream file(file_name.c_str(), ifstream::binary);
     if (file.is_open()){
         file.seekg(0, ios::end); //seeking to the end of the file
@@ -176,7 +176,7 @@ int main(){
     vector<pair<string,string> > table_schema;
     pair<string,string> name_type;
     time_t timestamp;
-    int key = 0;
+    int id = 0;
 
     if (schema.is_open()){
         while (schema.good()){
@@ -208,13 +208,15 @@ int main(){
 
         if (rel.is_open()){
             ofstream outfile("cbd", ios::binary);
+            int pos = 0;
+            ofstream index("index", ios::binary);
             ostream_iterator<string> output_iterator(outfile, "\n");
-            outfile.write(reinterpret_cast<const char *>(&it->first), 200*sizeof(char));
-            time(&timestamp);
-            outfile.write(reinterpret_cast<const char *>(&timestamp), sizeof(time_t));
-            outfile.write(reinterpret_cast<const char *>(&key), sizeof(int));
-            key++;
             while (rel.good()){
+                outfile.write(reinterpret_cast<const char *>(&it->first), 200*sizeof(char));
+                time(&timestamp);
+                outfile.write(reinterpret_cast<const char *>(&timestamp), sizeof(time_t));
+                outfile.write(reinterpret_cast<const char *>(&id), sizeof(int));
+                id++;
                 getline (rel,line);
                 row = split_into_vector(line,',');
                 for(unsigned i=0;i<row.size();i++){
@@ -223,12 +225,17 @@ int main(){
                     //cout<<s<<"("<<t<<")"<<endl; // imprime valor e tipo da célula
                     write_binary(outfile,s,t);
                 }
+                pos += row_size(table_schema);
+                //Writing to index file
+                index.write(reinterpret_cast<const char *>(&id), sizeof(int));
+                index.write(reinterpret_cast<const char *>(&pos), sizeof(int));
             }
             rel.close();
             outfile.close();
+            index.close();
         }
         //cout<<row_size(table_schema);
-        find_key("cbd", 1, row_size(table_schema));
+        //find_key("index", 1, 1);
         ifstream file(file_name.c_str(), ifstream::binary);
         if (file.is_open()){
             for (unsigned i=0; i<1; i++){
