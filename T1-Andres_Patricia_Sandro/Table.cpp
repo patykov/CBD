@@ -1,5 +1,9 @@
 #include <Table.h>
 
+Table::Table(){
+    
+}
+
 search_type Table::str_to_enum(std::string const& in_string) {
     if (in_string == "sequential") return SEQUENTIAL;
     if (in_string == "indexed") return INDEXED;
@@ -37,7 +41,7 @@ void Table::write_to_file(string filename){
         {
         	getline (rel,line);
         	vector<string> row = split_into_vector(line,','); 	            	
-         	load_data(outfile,row);
+         	load_data(outfile, row);
         }
         rel.close();
         outfile.close();
@@ -62,9 +66,4 @@ void Table::search(string st){
 			break;
 		}
 	}
-}	
-
-int main(){
-
-	return 0;
 }
