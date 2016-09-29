@@ -20,15 +20,16 @@ enum search_type{
 		
 class Table{
 	protected:		
-		search_type str_to_enum(string const& in_string);
-		void load_data(ofstream &outfile, vector<string> row);
+		virtual void load_data(ofstream &outfile, vector<string> row)=0;
+		
+		search_type str_to_enum(string const& in_string);		
 
 		vector<string> split_into_vector(string line,char ch);
 
 		pair<string,string> split_into_pair(string line,char ch);
 		void write_to_file(string filename);
 
-	public:
-		Table();
+	public:				
+
 		void search(string st);
 };

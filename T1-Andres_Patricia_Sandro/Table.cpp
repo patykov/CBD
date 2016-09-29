@@ -1,9 +1,5 @@
 #include <Table.h>
 
-Table::Table(){
-    
-}
-
 search_type Table::str_to_enum(std::string const& in_string) {
     if (in_string == "sequential") return SEQUENTIAL;
     if (in_string == "indexed") return INDEXED;

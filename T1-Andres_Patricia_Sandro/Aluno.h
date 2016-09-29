@@ -16,16 +16,17 @@ struct aluno_row{
 	float cr;
 };
 
-class Aluno:Table{
+class Aluno:public Table{
 	private:
 		string tablename;
 
 		int row_size();
 		void generate_id(aluno_row &aluno);
 	
-
-	public:		
-		void parse_row(ifstream infile,string row);
-		void load_data(ofstream outfile,vector<string> row);
-		Aluno();
+	protected:
+		void load_data(ofstream &outfile,vector<string> row);
+	public:
+		Aluno();		
+		void parse_row(ifstream infile);		
+		
 };
