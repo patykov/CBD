@@ -29,18 +29,22 @@ void Table::write_to_file(string filename){
 	ifstream rel(filename.c_str());	
 	string line;		
 	if (rel.is_open())
-    {
+    {        
         ofstream outfile("cbd.dat", ios::binary);
         ostream_iterator<string> output_iterator(outfile, "\n");      
-
+        //cout<<filename.c_str()<<endl;
+        int i=0;
         while (rel.good())
         {
+            cout<<i++<<endl;
         	getline (rel,line);
+            cout<<line<<endl;
         	vector<string> row = split_into_vector(line,','); 	            	
-         	load_data(outfile, row);
+         	write_row(outfile, row);
         }
-        rel.close();
         outfile.close();
+        rel.close();
+        
         
     }
 }	

@@ -19,14 +19,15 @@ struct aluno_row{
 class Aluno:public Table{
 	private:
 		string tablename;
-
+		int id;
 		int row_size();
 		void generate_id(aluno_row &aluno);
 	
 	protected:
-		void load_data(ofstream &outfile,vector<string> row);
+		void write_row(ofstream &outfile,vector<string> row);
+
 	public:
 		Aluno();		
-		void parse_row(ifstream infile);		
+		void parse_row(ifstream &infile);		
 		
 };

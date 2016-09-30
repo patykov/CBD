@@ -1,7 +1,8 @@
 #include <Aluno.h>
 
 Aluno::Aluno(){
-	//tablename = "aluno";
+	this->tablename = "aluno";
+	this->id=0;
 }
 
 int Aluno::row_size(){
@@ -12,7 +13,7 @@ void Aluno::generate_id(aluno_row &aluno){
 	aluno.id+=1;
 }
 
-void Aluno::parse_row(ifstream infile){
+void Aluno::parse_row(ifstream &infile){
 	aluno_row aluno;			
 	infile.read(reinterpret_cast<char *>(&aluno.tablename), sizeof(aluno.tablename));
 	infile.read(reinterpret_cast<char *>(&aluno.rowsize), sizeof(aluno.rowsize));
@@ -21,17 +22,20 @@ void Aluno::parse_row(ifstream infile){
 	infile.read(reinterpret_cast<char *>(&aluno.name), sizeof(aluno.name));			
 	infile.read(reinterpret_cast<char *>(&aluno.cr), sizeof(aluno.cr));
 }
-void Aluno::load_data(ofstream &outfile, vector<string> row){			
+void Aluno::write_row(ofstream &outfile, vector<string> row){			
 	aluno_row aluno;
 	aluno.dre=row[0];
 	aluno.name=row[1];
-	aluno.cr=atof(row[2].c_str());
+	aluno.cr=atof(row[2].c_str());	
 	time(&aluno.timestamp);
 	generate_id(aluno);
-	outfile.write(reinterpret_cast<char *>(&tablename),30*sizeof(char));
-	outfile.write(reinterpret_cast<char *>(row_size()),sizeof(int));
+	outfile.write(reinterpret_cast<char *>(&tablename),30*sizeof(char));	
+	ostringstream ss;
+    ss << row_size();    
+	outfile.write(ss.str().c_str(),sizeof(int));	
 	outfile.write(reinterpret_cast<char *>(&aluno.timestamp),sizeof(time_t));
 	outfile.write(reinterpret_cast<char *>(&aluno.id),sizeof(int));
 	outfile.write(reinterpret_cast<char *>(&aluno.name),50*sizeof(char));
-	outfile.write(reinterpret_cast<char *>(&aluno.cr),sizeof(float));			
+	outfile.write(reinterpret_cast<char *>(&aluno.cr),sizeof(float));		
+	cout<<"ths"<<endl;	
 }
