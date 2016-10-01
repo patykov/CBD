@@ -2,8 +2,9 @@
 
 search_type Table::str_to_enum(std::string const& in_string) {
     if (in_string == "sequential") return SEQUENTIAL;
-    if (in_string == "indexed") return INDEXED;
     if (in_string == "binary") return BINARY;
+    if (in_string == "indexed") return INDEXED;
+    if (in_string == "bptree") return BPTREE;
     if (in_string == "bitmap") return BITMAP;
     return SEQUENTIAL;
 }
@@ -30,7 +31,7 @@ void Table::write_to_file(string filename){
 	if (rel.is_open())
     {        
         string line;
-        ofstream outfile("cbd.dat", ios::out | ios::binary);
+        ofstream outfile((this->tablename+".dat").c_str(), ios::out | ios::binary);
         ostream_iterator<string> output_iterator(outfile, "\n");      
         //cout<<filename.c_str()<<endl;
         int i=0;
@@ -48,21 +49,32 @@ void Table::write_to_file(string filename){
         
     }
 }	
-void Table::search(string st){
+void Table::search(string st,string key){
+    Search s;    
+    string filename=this->tablename+".dat";
 	switch (str_to_enum(st)){
 		case SEQUENTIAL:{
+            s.sequential_search(key);
 			break;
 		} 
+        case BINARY:{
+            s.binary_search(key);
+            break;
+        }
 		case INDEXED:{
+            s.indexed_search(key);
 			break;
 		}
-		case BINARY:{
+		case BPTREE:{
+            s.bptree_search(key);
 			break;
 		}
 		case BITMAP:{
+            s.bitmap_search(key);
 			break;
 		}
 		default:{
+            s.sequential_search(key);
 			break;
 		}
 	}

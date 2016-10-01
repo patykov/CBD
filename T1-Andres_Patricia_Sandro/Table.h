@@ -15,12 +15,22 @@
 using namespace std;
 
 enum search_type{
-			SEQUENTIAL,INDEXED,BINARY,BITMAP
+			SEQUENTIAL,INDEXED,BINARY,BITMAP,BPTREE
 		};
-		
+
+struct table_row{
+
+};
 class Table{
-	protected:		
+	class Search;
+	protected:	
+		string tablename;
+		string key_field;
+		int id;
+		virtual size_t row_size()=0;
 		virtual void write_row(ofstream &outfile, vector<string> row)=0;		
+		virtual bool parse_row(ifstream &infile)=0;				
+		virtual void read_binary()=0;
 
 		search_type str_to_enum(string const& in_string);	
 
@@ -29,6 +39,15 @@ class Table{
 
 	public:			
 		void write_to_file(string filename);
-		void search(string st);
+		void search(string st,string key);
 		void print_file(string filename);
+};
+
+class Table::Search{
+	public:
+		table_row sequential_search(string key);
+		table_row binary_search(string key);
+		table_row indexed_search(string key);
+		table_row bptree_search(string key);
+		table_row bitmap_search(string key);
 };

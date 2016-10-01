@@ -6,28 +6,27 @@
 
 using namespace std;
 
-struct aluno_row{
-	char tablename[30];
+struct aluno_row:table_row{
+	char tablename[31];
 	int rowsize;
 	time_t timestamp;
 	int id;
-	char dre[9];
-	char name[50];
+	char dre[10];
+	char name[51];
 	float cr;
 };
 
 class Aluno:public Table{
-	private:
-		string tablename;
-		int id;
-		size_t row_size();
+	private:				
 		void generate_id(aluno_row &aluno);
 	
 	protected:
+		size_t row_size();
 		void write_row(ofstream &outfile,vector<string> row);
 
 	public:
 		Aluno();		
-		void parse_row(ifstream &infile);		
+		bool parse_row(ifstream &infile);		
 		void print_row(aluno_row aluno);
+		void read_binary();
 };
