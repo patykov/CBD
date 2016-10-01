@@ -1,12 +1,12 @@
 #include <Aluno.h>
 
 Aluno::Aluno(){
-	this->tablename = "aluno";
+	this->tablename="aluno";
 	this->id=0;
 }
 
-int Aluno::row_size(){
-	return (30*sizeof(char))+sizeof(time_t)+sizeof(int)+(50*sizeof(char))+(9*sizeof(char))+sizeof(float);
+size_t Aluno::row_size(){
+	return (30*sizeof(char))+sizeof(int)+sizeof(time_t)+sizeof(int)+(9*sizeof(char))+(50*sizeof(char))+sizeof(float);
 }
 
 void Aluno::generate_id(aluno_row &aluno){
@@ -15,27 +15,34 @@ void Aluno::generate_id(aluno_row &aluno){
 
 void Aluno::parse_row(ifstream &infile){
 	aluno_row aluno;			
-	infile.read(reinterpret_cast<char *>(&aluno.tablename), sizeof(aluno.tablename));
-	infile.read(reinterpret_cast<char *>(&aluno.rowsize), sizeof(aluno.rowsize));
-	infile.read(reinterpret_cast<char *>(&aluno.timestamp), sizeof(aluno.timestamp));
-	infile.read(reinterpret_cast<char *>(&aluno.id), sizeof(aluno.id));
-	infile.read(reinterpret_cast<char *>(&aluno.name), sizeof(aluno.name));			
-	infile.read(reinterpret_cast<char *>(&aluno.cr), sizeof(aluno.cr));
+
+	infile.read((char *)&aluno,sizeof(aluno_row));
+	infile.close();
+	this->print_row(aluno);
+	cout<<sizeof(aluno_row)<<endl;
+	cout<<row_size()<<endl;
 }
+
 void Aluno::write_row(ofstream &outfile, vector<string> row){			
 	aluno_row aluno;
-	aluno.dre=row[0];
-	aluno.name=row[1];
-	aluno.cr=atof(row[2].c_str());	
-	time(&aluno.timestamp);
+	std::copy(this->tablename.begin(),this->tablename.end(),aluno.tablename);
+	aluno.rowsize=this->row_size();
+	time_t timestamp;
+	time(&timestamp);
+	aluno.timestamp=timestamp;
 	generate_id(aluno);
-	outfile.write(reinterpret_cast<char *>(&tablename),30*sizeof(char));	
-	ostringstream ss;
-    ss << row_size();    
-	outfile.write(ss.str().c_str(),sizeof(int));	
-	outfile.write(reinterpret_cast<char *>(&aluno.timestamp),sizeof(time_t));
-	outfile.write(reinterpret_cast<char *>(&aluno.id),sizeof(int));
-	outfile.write(reinterpret_cast<char *>(&aluno.name),50*sizeof(char));
-	outfile.write(reinterpret_cast<char *>(&aluno.cr),sizeof(float));		
-	cout<<"ths"<<endl;	
+	std::copy(row[0].begin(),row[0].end(),aluno.dre);
+	std::copy(row[1].begin(),row[1].end(),aluno.name);	
+	aluno.cr=atof(row[2].c_str());		
+	outfile.write((const char *)&aluno, sizeof( aluno_row ));		
+}
+
+void Aluno::print_row(aluno_row aluno){
+	cout<<aluno.tablename<<endl;
+	cout<<aluno.rowsize<<endl;
+	cout<<aluno.timestamp<<endl;
+	cout<<aluno.id<<endl;
+	cout<<aluno.dre<<endl;
+	cout<<aluno.name<<endl;
+	cout<<aluno.cr<<endl;	
 }

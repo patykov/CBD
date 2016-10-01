@@ -27,20 +27,20 @@ pair<string,string> Table::split_into_pair(string line,char ch){
 }
 void Table::write_to_file(string filename){
 	ifstream rel(filename.c_str());	
-	string line;		
 	if (rel.is_open())
     {        
-        ofstream outfile("cbd.dat", ios::binary);
+        string line;
+        ofstream outfile("cbd.dat", ios::out | ios::binary);
         ostream_iterator<string> output_iterator(outfile, "\n");      
         //cout<<filename.c_str()<<endl;
         int i=0;
         while (rel.good())
-        {
-            cout<<i++<<endl;
+        {            
         	getline (rel,line);
-            cout<<line<<endl;
-        	vector<string> row = split_into_vector(line,','); 	            	
-         	write_row(outfile, row);
+            if(!line.empty()){                
+            	vector<string> row = split_into_vector(line,','); 	            	                
+             	write_row(outfile, row);
+            }
         }
         outfile.close();
         rel.close();
@@ -66,4 +66,27 @@ void Table::search(string st){
 			break;
 		}
 	}
+}
+
+void Table::print_file(string filename){
+    ifstream infile(filename.c_str(), ios::in | ios::binary);
+    if(infile.is_open()){
+        // get length of file:
+        infile.seekg (0, infile.end);
+        int length = infile.tellg();
+        infile.seekg (0, infile.beg);
+
+        // allocate memory:
+        char * buffer = new char [length];
+
+        // read data as a block:
+        infile.read (buffer,length);
+
+        infile.close();
+
+        // print content:
+        std::cout.write (buffer,length);
+
+        delete[] buffer;
+    }
 }

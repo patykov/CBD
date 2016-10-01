@@ -7,12 +7,12 @@
 using namespace std;
 
 struct aluno_row{
-	string tablename;
+	char tablename[30];
 	int rowsize;
 	time_t timestamp;
 	int id;
-	string dre;
-	string name;
+	char dre[9];
+	char name[50];
 	float cr;
 };
 
@@ -20,7 +20,7 @@ class Aluno:public Table{
 	private:
 		string tablename;
 		int id;
-		int row_size();
+		size_t row_size();
 		void generate_id(aluno_row &aluno);
 	
 	protected:
@@ -29,5 +29,5 @@ class Aluno:public Table{
 	public:
 		Aluno();		
 		void parse_row(ifstream &infile);		
-		
+		void print_row(aluno_row aluno);
 };

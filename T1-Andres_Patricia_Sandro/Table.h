@@ -30,4 +30,5 @@ class Table{
 	public:			
 		void write_to_file(string filename);
 		void search(string st);
+		void print_file(string filename);
 };
