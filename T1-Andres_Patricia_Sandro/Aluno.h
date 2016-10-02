@@ -26,7 +26,13 @@ class Aluno:public Table{
 
 	public:
 		Aluno();		
-		bool parse_row(ifstream &infile);		
-		void print_row(aluno_row aluno);
-		void read_binary();
+		aluno_row parse_row(ifstream &infile);		
+		void print_row(aluno_row aluno);	
+		void read_rows();	
+		aluno_row search(string st,string key);		
+		aluno_row sequential_search(string key);
+		aluno_row binary_search(string key);
+		aluno_row indexed_search(string key);
+		aluno_row bptree_search(string key);
+		aluno_row bitmap_search(string key);	
 };

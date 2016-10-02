@@ -5,6 +5,5 @@ Linkar:
 g++ *.o -o main
 
 Completo:
-g++ -I . -c *.cpp;g++ *.o -o main
-
+g++ -I . -c *.cpp && g++ *.o -o main && ./main
 

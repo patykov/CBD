@@ -26,7 +26,8 @@ pair<string,string> Table::split_into_pair(string line,char ch){
     int pos=line.find_first_of(ch);
     return make_pair(line.substr(0,pos),line.substr(pos+1));
 }
-void Table::write_to_file(string filename){
+void Table::write_to_file(){
+    string filename=this->tablename+".csv";
 	ifstream rel(filename.c_str());	
 	if (rel.is_open())
     {        
@@ -49,36 +50,6 @@ void Table::write_to_file(string filename){
         
     }
 }	
-void Table::search(string st,string key){
-    Search s;    
-    string filename=this->tablename+".dat";
-	switch (str_to_enum(st)){
-		case SEQUENTIAL:{
-            s.sequential_search(key);
-			break;
-		} 
-        case BINARY:{
-            s.binary_search(key);
-            break;
-        }
-		case INDEXED:{
-            s.indexed_search(key);
-			break;
-		}
-		case BPTREE:{
-            s.bptree_search(key);
-			break;
-		}
-		case BITMAP:{
-            s.bitmap_search(key);
-			break;
-		}
-		default:{
-            s.sequential_search(key);
-			break;
-		}
-	}
-}
 
 void Table::print_file(string filename){
     ifstream infile(filename.c_str(), ios::in | ios::binary);
