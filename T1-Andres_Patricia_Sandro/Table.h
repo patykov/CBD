@@ -16,7 +16,7 @@
 using namespace std;
 
 enum search_type{
-			SEQUENTIAL,INDEXED,BINARY,BITMAP,BPTREE
+			SEQUENTIAL,INDEXED,BINARY,BITMAP,BPTREE,HASHED
 		};
 
 struct table_row{
@@ -31,7 +31,7 @@ class Table{
 
 		virtual size_t row_size()=0;
 		virtual void write_row(ofstream &outfile, vector<string> row)=0;									
-
+		virtual void write_indexed_row(ofstream &outfile, ofstream &indexfile,vector<string> row)=0;									
 		search_type str_to_enum(string const& in_string);	
 
 		vector<string> split_into_vector(string line,char ch);

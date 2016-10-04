@@ -6,6 +6,7 @@ search_type Table::str_to_enum(std::string const& in_string) {
     if (in_string == "indexed") return INDEXED;
     if (in_string == "bptree") return BPTREE;
     if (in_string == "bitmap") return BITMAP;
+    if (in_string == "hashed") return HASHED;
     return SEQUENTIAL;
 }
 
@@ -33,7 +34,9 @@ void Table::write_to_file(){
     {        
         string line;
         ofstream outfile((this->tablename+".dat").c_str(), ios::out | ios::binary);
-        ostream_iterator<string> output_iterator(outfile, "\n");      
+        ofstream indexfile((this->tablename+"_index.dat").c_str(), ios::out | ios::binary);
+        ostream_iterator<string> output_iterator(outfile, "\n");
+        ostream_iterator<string> index_iterator(indexfile, "\n");      
         //cout<<filename.c_str()<<endl;
         int i=0;
         while (rel.good())
@@ -41,7 +44,7 @@ void Table::write_to_file(){
         	getline (rel,line);
             if(!line.empty()){                
             	vector<string> row = split_into_vector(line,','); 	            	                
-             	write_row(outfile, row);
+             	write_indexed_row(outfile, indexfile, row);
             }
         }
         outfile.close();

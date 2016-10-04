@@ -11,6 +11,7 @@ Aluno::Aluno(){
 	this->schema["dre"]="char[10]";
 	this->schema["name"]="char[51]";
 	this->schema["cr"]="float";
+	this->bptree(".",true);
 }
 
 size_t Aluno::row_size(){
@@ -46,6 +47,30 @@ void Aluno::write_row(ofstream &outfile, vector<string> row){
 	aluno.name[row[1].size()]='\0';
 	aluno.cr=atof(row[2].c_str());		
 	//this->print_row(aluno);
+
+	outfile.write((const char *)&aluno, sizeof( aluno_row ));		
+}
+
+void Aluno::write_indexed_row(ofstream &outfile, ofstream &indexfile, vector<string> row){		
+	aluno_row aluno;
+	std::copy(this->tablename.begin(),this->tablename.end(),aluno.tablename);
+	aluno.tablename[this->tablename.size()]='\0';
+	aluno.rowsize=sizeof(aluno_row);//this->row_size();
+	time_t timestamp;
+	time(&timestamp);
+	aluno.timestamp=timestamp;
+	generate_id(aluno);	
+	std::copy(row[0].begin(),row[0].end(),aluno.dre);
+	aluno.dre[row[0].size()]='\0';
+	std::copy(row[1].begin(),row[1].end(),aluno.name);	
+	aluno.name[row[1].size()]='\0';
+	aluno.cr=atof(row[2].c_str());		
+	//this->print_row(aluno);
+	int pos=outfile.tellp();
+	indexfile.write((const char*)&(aluno.id),sizeof(int));
+	indexfile.write((const char*)&pos,sizeof(int));
+	bptree.insert(aluno.id,pos);
+	hashmap[aluno.id]=pos;
 	outfile.write((const char *)&aluno, sizeof( aluno_row ));		
 }
 
@@ -147,13 +172,62 @@ aluno_row Aluno::binary_search(string key){
 }
 
 aluno_row Aluno::indexed_search(string key){
-
+	aluno_row aluno;
+    string filename=this->tablename+".dat";
+    string filename_index=this->tablename+"_index.dat";
+    cout<<"Searching file "<<filename<<endl;
+    ifstream infile_index(filename_index.c_str(), ios::in | ios::binary);
+    int key2=atoi(key.c_str());   
+    int id;
+    int pos;
+    if(infile_index.is_open())
+    {     	
+        while(infile_index>>id){
+        	infile_index>>pos;
+        	if(id==key2)
+        	{
+        		ifstream infile(filename.c_str(),ios::in|ios::binary);
+        		if(infile.is_open())
+			    {
+			    	infile.seekg(pos,infile.beg);     	
+			        infile.read((char *)&aluno,sizeof(aluno_row));
+			        infile.close();
+			        break;
+			    }	
+        	}
+            
+        }                   
+        infile_index.close();
+    }	
+    return aluno;
 }
 
 aluno_row Aluno::bptree_search(string key){
-
+	aluno_row aluno;
+	int pos;
+	int key2=atoi(key.c_str());
+	bptree.search(key, &pos);
+	ifstream infile(filename.c_str(),ios::in|ios::binary);
+	if(infile.is_open())
+    {
+    	infile.seekg(pos,infile.beg);     	
+        infile.read((char *)&aluno,sizeof(aluno_row));
+        infile.close();
+    }
+    return aluno;
 }
 
-aluno_row Aluno::bitmap_search(string key){
-
+aluno_row Aluno::hashed_search(string key){
+	aluno_row aluno;
+	int key2=atoi(key.c_str());
+	int pos=this->hashmap[key2];
+	
+	ifstream infile(filename.c_str(),ios::in|ios::binary);
+	if(infile.is_open())
+    {
+    	infile.seekg(pos,infile.beg);     	
+        infile.read((char *)&aluno,sizeof(aluno_row));
+        infile.close();
+    }
+    return aluno;
 }
